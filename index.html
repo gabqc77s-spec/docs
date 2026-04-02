@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
     <title>AI Search Explorer</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -193,6 +194,67 @@
     <!-- Search widget element -->
     <gen-search-widget configId="db2f2789-2fb1-4c3a-aac4-3b98f46b9756" location="us" triggerId="searchWidgetTrigger">
     </gen-search-widget>
+
+    <!-- Script para forzar Tema Oscuro en el componente cerrado de Google -->
+    <script>
+        // 1. Indicar preferencia global
+        document.documentElement.style.setProperty('color-scheme', 'dark');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const forceDarkTheme = () => {
+                const widget = document.querySelector('gen-search-widget');
+                if (widget) {
+                    // Try setting various common theme attributes
+                    widget.setAttribute('colorTheme', 'dark');
+                    widget.setAttribute('theme', 'dark');
+                    widget.setAttribute('data-theme', 'dark');
+                    widget.setAttribute('color-mode', 'dark');
+                    
+                    // Si el Shadow DOM está abierto o disponible, inyectar el modo oscuro
+                    if (widget.shadowRoot) {
+                        let style = widget.shadowRoot.querySelector('#force-dark-style');
+                        if (!style) {
+                            style = document.createElement('style');
+                            style.id = 'force-dark-style';
+                            
+                            // Forzados para Google Material Design Web y estilos nativos del widget
+                            style.textContent = `
+                                *, :host, main, article, section, div {
+                                    --mdc-dialog-box-shadow: 0 24px 38px 3px rgba(0,0,0,0.5);
+                                    --mdc-theme-surface: #0f172a !important;
+                                    --mdc-theme-on-surface: #f8fafc !important;
+                                    --mdc-theme-background: #0f172a !important;
+                                    --mdc-theme-text-primary-on-background: #f8fafc !important;
+                                    color: #f8fafc !important;
+                                }
+                                .search-container, .gen-search-container, dialog, .dialog, md-dialog {
+                                    background-color: #0f172a !important;
+                                    background: #0f172a !important;
+                                }
+                                input, textarea {
+                                    background-color: #1e293b !important;
+                                    color: white !important;
+                                }
+                            `;
+                            widget.shadowRoot.appendChild(style);
+                        }
+                    }
+                }
+            };
+
+            // Ejecutar forzado varias veces por la carga asíncrona del script oficial
+            forceDarkTheme();
+            setTimeout(forceDarkTheme, 500);
+            setTimeout(forceDarkTheme, 2000);
+
+            // También ejecutar cuando se interactúe con el botón
+            document.getElementById('searchWidgetTrigger').addEventListener('click', () => {
+                setTimeout(forceDarkTheme, 50);
+                setTimeout(forceDarkTheme, 300);
+                setTimeout(forceDarkTheme, 1000);
+            });
+        });
+    </script>
 </body>
 
 </html>
